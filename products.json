@@ -1,0 +1,40 @@
+[
+	{
+		"id": 1,
+		"title": "Picadora",
+		"description": "https://d3ugyf2ht6aenh.cloudfront.net/stores/001/373/205/products/mini-picadora-oster-fpstfp3340-11-c0907aea4590b3b0a316835059618704-640-0.webp",
+		"price": 13400,
+		"thumbnail": "buscalo en la web",
+		"code": 6000,
+		"stock": 12
+	},
+	{
+		"id": 2,
+		"title": "Picadora 2",
+		"description": "picadora oster fb3340",
+		"price": 26000,
+		"thumbnail": "http://buscalo en la web/la imagen",
+		"code": 5000,
+		"stock": 12
+	},
+	{
+		"id": 3,
+		"title": "taladro",
+		"description": "taladro con percutor",
+		"price": 22000,
+		"thumbnail": "http://buscar en intrnet/la imagena",
+		"code": 2020,
+		"stock": 100
+	},
+	{
+		"id": 5,
+		"title": "mesa de comedor",
+		"description": "probando el update",
+		"price": 120000,
+		"thumbnail": "buscalo en internet",
+		"code": 2031,
+		"stock": 27,
+		"status": true,
+		"category": "cocina"
+	}
+]
