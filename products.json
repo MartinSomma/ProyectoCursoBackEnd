@@ -36,5 +36,71 @@
 		"stock": 27,
 		"status": true,
 		"category": "cocina"
+	},
+	{
+		"id": 9,
+		"title": "Prueba",
+		"description": "desc de prueba ",
+		"price": 5050.5,
+		"thumbnail": "poner urls",
+		"code": 4142,
+		"stock": 190,
+		"status": true,
+		"category": "bar"
+	},
+	{
+		"id": 10,
+		"title": "Prueba",
+		"description": "desc de prueba ",
+		"price": 5050.5,
+		"thumbnail": "poner urls",
+		"code": 4143,
+		"stock": 190,
+		"status": true,
+		"category": "bar"
+	},
+	{
+		"id": 11,
+		"title": "Prueba",
+		"description": "desc de prueba ",
+		"price": 5050.5,
+		"thumbnail": "poner urls",
+		"code": 4144,
+		"stock": 190,
+		"status": true,
+		"category": "bar"
+	},
+	{
+		"id": 12,
+		"title": "nuevo articulo 6000",
+		"description": "probando el add con websockets",
+		"price": 45000,
+		"thumbnail": "buscalo en internet",
+		"code": 6001,
+		"stock": 27,
+		"status": true,
+		"category": "cocina"
+	},
+	{
+		"id": 13,
+		"title": "nuevo articulo 6000",
+		"description": "probando el add con websockets",
+		"price": 45000,
+		"thumbnail": "buscalo en internet",
+		"code": 6002,
+		"stock": 27,
+		"status": true,
+		"category": "cocina"
+	},
+	{
+		"id": 14,
+		"title": "nueva prueba",
+		"description": "dfgdf",
+		"price": 2345,
+		"thumbnail": "rul",
+		"code": 4147,
+		"stock": 12,
+		"status": true,
+		"category": "bar"
 	}
 ]

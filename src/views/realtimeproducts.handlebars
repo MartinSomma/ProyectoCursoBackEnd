@@ -1,17 +1,32 @@
-<div>
-     websockets:  {{title}}
-</div>
+<h1>
+     {{title}}
+</h1>
 
 <form id="formulario">
-     <label for="text1">Ingresa el texto uno:</label>
-     <input type="text" name="text1" value="texto1">
-     <label for="text2">Ingresa el texto dos:</label>
-     <input type="text" name="text2" value="texto2">
-     <input type="submit" id="btnSubmit" value="Enviar"></input>
+     <label for="text1">Title:</label>
+     <input type="text" name="text1" value=""></br>
+     <label for="text2">Descripción:</label>
+     <input type="text" name="text2" value=""></br>
+     <label for="text2">Precio:</label>
+     <input type="text" name="text2" value=""></br>
+     <label for="text2">URL thumbnails:</label>
+     <input type="text" name="text2" value=""></br>
+     <label for="text2">Code:</label>
+     <input type="text" name="text2" value=""></br>
+     <label for="text2">Stock:</label>
+     <input type="text" name="text2" value=""></br>
+     <label for="text2">Category:</label>
+     <input type="text" name="text2" value=""></br>
+     <label for="text2">Status:</label>
+     <input type="text" name="text2" value=""></br>
+
+     <input type="submit" id="btnSubmit" value="Cargar Producto"></input>
 
 </form>
 
-<div id="prodList"></div>
+<div id="prodTabla">
+
+</div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/rtprods.js"></script>

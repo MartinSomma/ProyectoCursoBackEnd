@@ -62,6 +62,7 @@ export default class ProductManager {
       category}))
       : console.log(this.#error)
     await fs.promises.writeFile(this.#file, JSON.stringify(prods, null, '\t'))
+    return(this.#error)  
   }
 
   updateProduct = async ( id, data) => {

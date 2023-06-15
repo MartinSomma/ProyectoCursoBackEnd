@@ -1,6 +1,5 @@
 import {Router} from 'express'
 import ProductManager from '../entregable2.js'
-import { Server } from 'socket.io'
 
 
 const prueba = [2,3,4]
@@ -15,8 +14,7 @@ router.get('/', (request,response) => {
     
     manager.getProducts().then((data) => {
         if (!limit && !id) {
-            response.status(200).render('index', {data})
-            //response.status(200).send(data) 
+            response.status(200).send(data) 
         } else if (id) {
             const prod = data.find(item => item.id == id)
             if (!prod) return response.status(404).send({ error: 'El producto no existe' })
@@ -39,9 +37,16 @@ router.get('/:pid', (req,res) => {
 
 //endpoint para crear nuevo producto
 router.post('/', async (req,res) => {
+    //console.log("entramos aca")
     const {title, description, price, thumbnail, code, stock,status,category} = req.body
-    await manager.addProduct(title, description, price, thumbnail, code, stock,status,category)
-    res.json({message: `los datos son ${title} ${description} ${price} `})
+    const result = await manager.addProduct(title, description, price, thumbnail, code, stock,status,category)
+    console.log('el resultado de la operacion es: ', result)
+
+    if (typeof result == 'string') return res.json({status: 'error', error: result})
+    
+    const prods = await manager.getProducts()
+    req.io.emit('info', prods)
+    res.json({status: 'success', payload: result})
     
 })
 
@@ -56,6 +61,8 @@ router.put('/:pid', async(req,res) => {
         res.status(404).json({message: 'error'})
 
     }
+    const prods = await manager.getProducts()
+    req.io.emit('info', prods)
     
 })
 
@@ -63,9 +70,11 @@ router.delete('/:pid', async(req,res) => {
     const id = req.params.pid
     
     const resultado = await manager.deleteProductoByID(id)
+    const prods = await manager.getProducts()
+    req.io.emit('info', prods)
     
-    if (resultado) res.status(200).json({message: `ID ${id} fue eliminado`})
-    res.status(404).json ({message: `ID ${id} no encontrado`})
+    if (resultado) res.json({status: 'success', payload: `ID ${id} fue eliminado`})
+    else res.json ({status: 'error', error: `ID ${id} no encontrado`})
 })
 
 

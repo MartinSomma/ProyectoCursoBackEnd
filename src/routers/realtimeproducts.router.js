@@ -2,7 +2,7 @@ import { Router } from  'express'
 
 const router = Router()
 
-const objPrueba = {id:1, title: "prueba de titulo"}
+const objPrueba = {id:1, title: "Vista de Productos online con webockets"}
 
 router.get('/', (req,res)=>{
     res.render('realtimeproducts', objPrueba)

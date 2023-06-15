@@ -1,0 +1,20 @@
+
+
+label {
+    width: 150px;
+    display: inline-block;
+    
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+td {
+    width: 150px;
+    text-align: center;
+    border-bottom: 1px solid #000000;
+}
+th {
+    border-bottom: 1px  double #000000;
+}
