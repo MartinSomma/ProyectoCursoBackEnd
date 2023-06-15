@@ -40,7 +40,6 @@ router.post('/', async (req,res) => {
     //console.log("entramos aca")
     const {title, description, price, thumbnail, code, stock,status,category} = req.body
     const result = await manager.addProduct(title, description, price, thumbnail, code, stock,status,category)
-    console.log('el resultado de la operacion es: ', result)
 
     if (typeof result == 'string') return res.json({status: 'error', error: result})
     

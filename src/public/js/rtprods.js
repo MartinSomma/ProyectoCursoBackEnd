@@ -65,7 +65,6 @@ socket.on('info', data => {
 
     for(i=0; i<btnEliminar.length; i++){
         btnEliminar[i].onclick = (e) => {
-            console.log(e.target.dataset.id)
             fetch(`/api/products/${e.target.dataset.id}`, {
                 method: 'delete',
                 headers: {'Content-Type': 'application/json'
