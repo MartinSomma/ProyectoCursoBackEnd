@@ -1,4 +1,3 @@
-//console.log("nuevoooooo js")
 const form = document.querySelector('#formulario') 
 const inputs = document.querySelectorAll("#formulario input")
 

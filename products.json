@@ -91,16 +91,5 @@
 		"stock": 27,
 		"status": true,
 		"category": "cocina"
-	},
-	{
-		"id": 14,
-		"title": "nueva prueba",
-		"description": "dfgdf",
-		"price": 2345,
-		"thumbnail": "rul",
-		"code": 4147,
-		"stock": 12,
-		"status": true,
-		"category": "bar"
 	}
 ]
