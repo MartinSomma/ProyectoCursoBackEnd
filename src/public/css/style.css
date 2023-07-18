@@ -10,6 +10,12 @@ form {
     margin-bottom: 20px;
 }
 
+tr {
+    width: 150px;
+    text-align: center;
+    
+}
+
 td {
     width: 150px;
     text-align: center;

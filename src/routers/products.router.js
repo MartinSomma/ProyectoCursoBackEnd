@@ -1,84 +1,156 @@
 import {Router} from 'express'
-import ProductManager from '../entregable2.js'
+import ProductManager from '../dao/fsManagers/entregable2.js'
+import productModel from '../dao/models/products.model.js'
+import {PORT} from '../app.js'
 
-
-const prueba = [2,3,4]
-
-const manager = new ProductManager('./products.json');
 const router = Router()
 
-router.get('/', (request,response) => {
+export const getProducts = async (req, res) => {
+    try{
+        
+        const limit = req.query.limit || 10
+        const page= req.query.page || 1
+        
+        const filterOptions = {}
+        const paginateOptions = {lean: true, limit, page}
+
+        if (req.query.category) filterOptions.category = req.query.category
+        if (req.query.stock) filterOptions.stock = req.query.category
+        
+        if (req.query.sort === 'asc') paginateOptions.sort = {price: 1}
+        if (req.query.sort === 'desc') paginateOptions.sort = {price: -1}
+        
+
+        const result = await productModel.paginate(filterOptions, paginateOptions)
+        
+        
+        if (result.hasNextPage && req.query.page){
+            const strUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.nextPage}`)
+            result.nextLink = `http://${req.hostname}:${PORT}${strUrl}`
+           
+        } else if (result.hasNextPage && !req.query.page){
+            result.nextLink = `http://${req.hostname}:${PORT}${req.originalUrl}?page=${result.nextPage}`
+        }
+        else { 
+            result.nextLink = null
+        }
+
+        if (result.hasPrevPage && req.query.page){
+            const strUrl = req.originalUrl.replace(`page=${req.query.page}`, `page=${result.prevPage}`)
+            result.prevLink = `http://${req.hostname}:${PORT}${strUrl}`
+           
+        } else if (result.hasPrevPage && !req.query.page){
+            result.prevLink = `http://${req.hostname}:${PORT}${req.originalUrl}?page=${result.nextPage}`
+        }
+        else { 
+            result.prevLink = null
+        }
+
+        return result
+
+    }
+    catch (err) {
+        
+        return err
+    }
+
+}
+
+router.get('/', async(req,res) => {
+   
+    try{
+        const result = await getProducts(req, res)
+        res.status(200).json({ status: 'success', payload: result })
+    }
+    catch (err){
+        res.status(500).json({status: 'error', error: err.message})
+    }
     
-    const limit = request.query.limit
-    const id = request.params.pid
     
-    manager.getProducts().then((data) => {
-        if (!limit && !id) {
-            response.status(200).send(data) 
-        } else if (id) {
-            const prod = data.find(item => item.id == id)
-            if (!prod) return response.status(404).send({ error: 'El producto no existe' })
-            response.send(prod)
-        } else if (limit) {
-            response.send ( data.slice(0, limit) )
-        } 
-    } )
+
     
 })
 
-router.get('/:pid', (req,res) => {
-    const id = req.params.pid
-    manager.getProductById(id)
-    .then( (data) => {
-        if (data) return res.status(200).send(data)
-        return res.status(404).send(`el producto con id ${id} no existe.`)
-    })
-} ) 
+router.get('/:pid', async (req,res) => {
+    
+    try {
+        const id = req.params.pid
+        const prod = await productModel.findById(id).lean().exec()
+        if (prod == null){
+            return res.status(404).json({status: 'error', error: 'not found'})
+        }
+        res.status(200).json({status: 'success', payload: prod })
+
+    }
+    catch (err) {
+        res.status(404).json({status: 'error', error: err.message  })
+    }
+}) 
 
 //endpoint para crear nuevo producto
 router.post('/', async (req,res) => {
-    //console.log("entramos aca")
-    const {title, description, price, thumbnail, code, stock,status,category} = req.body
-    const result = await manager.addProduct(title, description, price, thumbnail, code, stock,status,category)
-
-    if (typeof result == 'string') return res.json({status: 'error', error: result})
     
-    const prods = await manager.getProducts()
-    req.io.emit('info', prods)
-    res.json({status: 'success', payload: result})
+    try {
+        const prod = req.body
+        const result = await productModel.create(prod)
+
+        req.io.emit('info', await productModel.find().lean().exec())
+        res.status(201).json({ status: 'success', payload: result })
+        
+    } catch(err) {
+        res.status(500).json({ status: 'error', error: err.message })
+    }
     
 })
 
-//endpoint para actualizar los datos de un usuario
+//endpoint para actualizar los datos de un producto
 router.put('/:pid', async(req,res) => {
-    const id = req.params.pid
-    const data = req.body
-
-    if (await manager.updateProduct(id, data)){
-        res.status(200).json({message: `El pid = ${id} se ha actualizado`})
-    } else {
-        res.status(404).json({message: 'error'})
-
-    }
-    const prods = await manager.getProducts()
-    req.io.emit('info', prods)
     
+    try {
+
+        const id = req.params.pid
+        const data = req.body
+
+        const result = await productModel.findByIdAndUpdate(id, data, {returnDocument: 'after'})
+
+        if (result=== null) {
+            return res.send(404).json({ status: 'error', error: 'not found'  })
+        }
+
+        req.io.emit('info', await productModel.find().lean().exec())
+        res.status(200).json({message: `El pid = ${id} se ha actualizado`})
+    }
+    catch (err) {
+        res.status(500).json({status: 'error', message: err.message})
+    }
+        
 })
 
 router.delete('/:pid', async(req,res) => {
-    const id = req.params.pid
     
-    const resultado = await manager.deleteProductoByID(id)
-    const prods = await manager.getProducts()
-    req.io.emit('info', prods)
+
+    try {
+        const id = req.params.pid
+        const resultado = await productModel.findByIdAndDelete(id)
+
+        if ( resultado == null ){
+            return res.status(404).json({status: 'error', error: `El pid = ${id} no existe`})
+        }
+        
+        const prods = await productModel.find().lean().exec()
+        req.io.emit('info', prods)
+        res.status(200).json({status: 'success' , message: `El pid = ${id} se ha eliminado`})
+        
+    }
+    catch (error) {
+        res.status(404).json({status: 'error', error: error.message})
+    }
     
-    if (resultado) res.json({status: 'success', payload: `ID ${id} fue eliminado`})
-    else res.json ({status: 'error', error: `ID ${id} no encontrado`})
 })
 
 
-router.get('vista', (req, res) => {
-    res.render('index')
-})
+//router.get('vista', (req, res) => {
+//    res.render('index')
+//})
 
 export default router

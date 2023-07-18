@@ -1,0 +1,26 @@
+<div>
+    <h2> Productos en Carrito {{result._id}}  </h2>
+    <table class="table table-striped">
+        <tr>
+            <th>Prod ID</th>
+            <th>codigo</th>
+            <th>title</th>
+            <th>Precio</th>
+            <th>Quantity</th>
+            <th>Categoria</th>
+        </tr>
+
+        {{#each result.products}}
+            <tr class="table-light">
+                <td>{{this.product._id}} </td>
+                <td>{{this.product.code}} </td>
+                <td>{{this.product.title}}</td>
+                <td>{{this.product.price}}</td>
+                <td>{{this.quantity}}</td>
+                <td>{{this.product.category}}</td>
+
+            </tr>
+        {{/each}}
+        
+    </table>
+</div>   

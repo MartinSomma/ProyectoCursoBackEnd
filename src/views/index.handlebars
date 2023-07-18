@@ -1,24 +1,51 @@
 <div>
     <h2> Lista de productos: </h2>
-    <table>
+    <table class="table table-striped">
         <tr>
             <th>ID</th>
             <th>codigo</th>
             <th>title</th>
             <th>Precio</th>
-            <th>stock</th>
+            <th>Stock</th>
+            <th>Categoria</th>
         </tr>
 
-        {{#each data}}
-            <tr>
-                <td>{{this.id}} </td>
+        {{#each data.docs}}
+            <tr class="table-light">
+                <td> <button id="bntAdd2Cart" class="btn btn-secondary" type="button" data-id="{{this._id}}">Add2Cart</button>  </td>
                 <td>{{this.code}} </td>
                 <td>{{this.title}}</td>
                 <td>{{this.price}}</td>
                 <td>{{this.stock}}</td>
+                <td>{{this.category}}</td>
 
             </tr>
         {{/each}}
+        
     </table>
+    
+    <div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="{{data.prevLink}}">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="{{data.nextLink}}">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+    
+    
+
+
+    <div> Docs: {{data.totalDocs}}</div>
+    <div> Pages: {{data.totalPages}}</div>
+
+
 
 </div>
+
+<div class="seccionIdCarritos"> </div>
+
+
+
+
+<script src="/js/vistaProducts.js"></script>
