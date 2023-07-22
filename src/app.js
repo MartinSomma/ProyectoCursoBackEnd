@@ -9,10 +9,15 @@ import ProductManager from './dao/fsManagers/entregable2.js'
 import carritoVista from './routers/carritoVista.router.js'
 import mongoose, { mongo } from 'mongoose'
 import productModel from './dao/models/products.model.js'
+import registroVista from './routers/registroVista.router.js'
+import loginVista from './routers/loginVista.router.js'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
+import userRouter from './routers/user.router.js'
 
 
 
-
+const dbURL = 'mongodb+srv://martinps:p4ssw0rd@cluster0.v2lwqah.mongodb.net/ecommerce'
 
 export const PORT = 8080
 const app = express()
@@ -24,7 +29,7 @@ app.use(express.urlencoded({extended: true}))
 
 
 try {
-    await mongoose.connect('mongodb+srv://martinps:p4ssw0rd@cluster0.v2lwqah.mongodb.net/ecommerce', {
+    await mongoose.connect(dbURL, {
         useUnifiedTopology: true,
     })
     const httpServer = app.listen(PORT, () => console.log('Srv Up!'))
@@ -43,14 +48,37 @@ app.use((req,res,next) => {
     next()
 })
 
+
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: dbURL,
+        dbName: 'ecommerce',
+        mongoOptions: {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }
+    }),
+    secret: 'victoriasecret',
+    resave: true,
+    saveUninitialized: true
+}))
+
+
 app.get('/health', (req, res) => res.json({ message: 'The server is running on port 8080' }))
 app.use('/api/products', prodRouter)
 app.use('/api/carrito', carritoRouter)
+
+//app.use('/user/registro', registro )
+//app.use('/user/login', login)
+
+app.use('/user', userRouter)
 
 
 app.use('/products', prodVistaRouter)
 app.use('/realtimeproducts', realtimeproductsRouter )
 app.use('/carrito', carritoVista)
+app.use('/registro', registroVista)
+app.use('/login', loginVista)
 
 
 
