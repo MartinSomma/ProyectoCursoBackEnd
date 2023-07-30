@@ -15,6 +15,11 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import userRouter from './routers/user.router.js'
 
+import __dirname from "./utils.js"
+import passport from "passport";
+import initializePassport from "./config/passport.config.js";
+
+
 
 
 const dbURL = 'mongodb+srv://martinps:p4ssw0rd@cluster0.v2lwqah.mongodb.net/ecommerce'
@@ -39,9 +44,9 @@ try {
 }
 
 app.engine('handlebars', handlebars.engine())
-app.set('views', './src/views')
+app.set('views', __dirname + '/views')
 app.set('view engine', 'handlebars')
-app.use(express.static('./src/public'))
+app.use(express.static( __dirname +'/public'))
 
 app.use((req,res,next) => {
     req.io = io
@@ -62,6 +67,11 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
 
 
 app.get('/health', (req, res) => res.json({ message: 'The server is running on port 8080' }))

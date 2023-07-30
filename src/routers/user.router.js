@@ -3,6 +3,8 @@ import userModel from '../dao/models/user.model.js'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import express from 'express'
+import passport from "passport";
+import { createHash, isValidPassword } from '../utils.js'
 
 const router = Router()
 const dbURL = 'mongodb+srv://martinps:p4ssw0rd@cluster0.v2lwqah.mongodb.net/ecommerce'
@@ -24,32 +26,41 @@ app.use(session({
     saveUninitialized: true
 }))
 
+// API para crear usuarios en la DB
+//router.post('/registro', passport.authenticate('registro', {
+//  failureRedirect: '/user/failRegister'
+//}), async(req, res) => {
+//  
+//  res.redirect('/user/login')
+//})
+//
+//router.get('/failRegister', (req, res) => {
+//  res.send({ error: 'Error al registrarrrr!'})
+//})
+
 
 router.post("/registro", async (req, res) => {
   try {
-    const data = req.body;
-    if (data.username && data.password && data.profile) {
+    
+    if (req.body.username && req.body.password && req.body.profile) {
+
+      const data = {
+        username: req.body.username,
+        password: createHash(req.body.password),
+        profile: req.body.profile
+      }
+
       let result = await userModel.find({ username: data.username });
+      
       if (result.length == 1) {
-        return res
-          .status(404)
-          .json({
-            status: "error",
-            message: `Usuario ${data.username} ya existe`,
-          });
+        return res.status(404).json({ status: "error", message: `Usuario ${data.username} ya existe`});
       }
 
       result = await userModel.create(data);
-      return res
-        .status(200)
-        .json({
-          status: "succes",
-          payload: `Usuario ${result.username} dado de alta`,
-        });
+      return res.status(200).json({ status: "succes", payload: `Usuario ${result.username} dado de alta`});
+    
     } else {
-      return res
-        .status(500)
-        .json({ status: "error", message: "hubo un error en el alta" });
+      return res.status(500).json({ status: "error", message: "Faltan datos para la creacion del usuario" });
     }
   } catch (err) {
     res.status(500).json({ status: "error", message: err });
@@ -58,23 +69,28 @@ router.post("/registro", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const user = req.body;
-    const result = await userModel.find({
-      username: user.username,
-      password: user.password,
-    });
+    const {username, password} = req.body;
+    const result = await userModel.findOne({ username }).lean().exec();
 
-    if (result.length == 1) {
-      req.session.user = {username: result[0].username, profile: result[0].profile }
+    //console.log(result)
 
-      if (req.session.user.profile == "admin") {
-        res.redirect("http://localhost:8080/products");
-      } else {
-        res.send("es necesario ser admin");
-      }
-    } else {
-      res.send("error de login");
+    if (!result){
+      return res.status(401).send("Usuario no encontrado");
     }
+
+    if( !isValidPassword(result, password)) {
+      return res.status(403).send({status: 'error', error: 'Password incorrecta' })
+    }
+
+    req.session.user = result
+    
+    if (req.session.user.profile == "admin") {
+      res.redirect("/products");
+    } else {
+      res.send("es necesario ser admin");
+    }
+
+
   } catch (err) {
     console.log(err);
   }
