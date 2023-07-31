@@ -1,4 +1,12 @@
-
+.encabezadoProductos {
+    background-color: lightgrey;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
 
 label {
     width: 150px;
