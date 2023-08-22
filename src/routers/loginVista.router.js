@@ -1,9 +1,8 @@
 import {Router} from 'express'
+import { viewLoginController } from '../controllers/views.controller.js'
 
 const router = Router()
 
-router.get('/', (req,res) => {
-    res.render('login')
-})
+router.get('/', viewLoginController )
 
 export default router

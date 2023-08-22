@@ -3,6 +3,12 @@ import local from 'passport-local'
 import userModel from '../dao/models/user.model.js'
 import { createHash, isValidPassword } from '../utils.js'
 import GitHubStrategy from 'passport-github2'
+import config from "../config.js"
+import { cartCreateService } from "../services/cart.services.js"
+
+const githubClientID = config.githubClientID
+const githubClientSecret = config.githubClientSecret
+const githubCallBackURL = config.githubCallBackURL
 
 const LocalStrategy = local.Strategy
 
@@ -10,18 +16,19 @@ const initializePassport = () => {
 
 
     passport.use('github', new GitHubStrategy({
-        clientID: 'Iv1.0a2147906c016a6e',
-        clientSecret: 'fd466531658ed77e72ceca8fe34342bf569b7dbb',
-        callbackURL: 'http://localhost:8080/user/githubcallback'
+        clientID: githubClientID,
+        clientSecret: githubClientSecret,
+        callbackURL: githubCallBackURL
     }, async(accessToken, refreshToken, profile, done) => {
-        //console.log(profile)
         try {
             const user = await userModel.findOne({ username: profile._json.email })
             if (user) return done(null, user)
+            const cart = await cartCreateService()
             const newUser = await userModel.create({
                 username: profile._json.email,
                 password: " ",
-                profile : "user"
+                profile : "user",
+                cart: cart
 
             })
             return done(null, newUser)
@@ -29,9 +36,6 @@ const initializePassport = () => {
             return done(`Error to login with GitHub => ${err.message}`)
         }
     }))
-
-
-
 
     passport.use('registro', new LocalStrategy({
         passReqToCallback: true,
@@ -41,14 +45,14 @@ const initializePassport = () => {
         
         try {
             const queryUser = await userModel.findOne({ username: user }).lean().exec()
-            
             if (queryUser) {
-                console.log('User already exists')
+                console.log(`User already exists con el carrito `)
                 return done(null, false)
             }
 
+            const cart = await cartCreateService()
             const newUser = {
-                username, password: createHash(password), profile
+                username, password: createHash(password), profile, cart
             }
             const result = await userModel.create(newUser)
             return done(null, result)

@@ -1,6 +1,8 @@
 import mongoose from "mongoose"
+import config from "../../config.js"
 
-const cartCollection = 'carts'
+const cartCollection = config.cartCollection
+const productCollection = config.productCollection
 
 const cartSchema = new mongoose.Schema({
     products: {
@@ -8,7 +10,7 @@ const cartSchema = new mongoose.Schema({
             _id: false,
             product: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "prodcuts"
+                ref: productCollection
             },
             quantity: Number
         }],

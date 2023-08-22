@@ -1,9 +1,8 @@
 import {Router} from 'express'
+import { viewRegistroController } from '../controllers/views.controller.js'
 
 const router = Router()
 
-router.get('/', (req,res) => {
-    res.render('registro')
-})
+router.get('/', viewRegistroController )
 
 export default router

@@ -1,11 +1,8 @@
 import { Router } from  'express'
+import { viewRealTimeProductsController } from '../controllers/views.controller.js'
 
 const router = Router()
 
-const objPrueba = {id:1, title: "Vista de Productos online con webockets"}
-
-router.get('/', (req,res)=>{
-    res.render('realtimeproducts', objPrueba)
-})
+router.get('/', viewRealTimeProductsController)
 
 export default router
