@@ -4,7 +4,9 @@ import MongoStore from 'connect-mongo'
 import express from 'express'
 import passport from "passport";
 import config from '../config.js'
-
+import { registroController, failRegisterController, loginController,
+        failLoginController, githubController, githubcallbackController, logoutController,
+        queryController } from '../controllers/user.controller.js';
 
 const router = Router()
 const dbURL = config.dbURL
@@ -28,54 +30,22 @@ app.use(session({
 }))
 
  //API para crear usuarios en la DB con passport
-router.post('/registro', 
-            passport.authenticate('registro', {failureRedirect: '/user/failRegister'}), 
-            async(req, res) => {
-                res.redirect('/login')
-            })
-
-router.get('/failRegister', (req, res) => {
-    res.send({ error: 'Error al registrar!'})
-  } )
+router.post('/registro', passport.authenticate('registro', {failureRedirect: '/user/failRegister'}) , registroController)
+router.get('/failRegister', failRegisterController )
 
 
 //API de login con passport
-router.post('/login', passport.authenticate('login', 
-            { failureRedirect: '/user/failLogin'}), 
-            async (req, res) => {
-              res.redirect('/products')
-})
+router.post('/login', passport.authenticate('login', { failureRedirect: '/user/failLogin'}), loginController)
+router.get('/failLogin', failLoginController)
 
-router.get('/failLogin', (req, res) => {
-  res.send({ error: 'Login Fail!'})
-})
+//API de login con GITHUB
+router.get('/github', passport.authenticate('github', { scope: ['user:email']}), githubController)
+router.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/login'}), githubcallbackController)
 
+//API de logout
+router.get("/logout", logoutController)
 
-router.get('/github',
-    passport.authenticate('github', { scope: ['user:email']}),
-    async(req, res) => {}
-)
-
-router.get('/githubcallback', 
-    passport.authenticate('github', {failureRedirect: '/login'}),
-    async(req, res) => {
-        res.redirect('/products')
-    }
-)
-
-router.get("/logout", (req, res) => {   
-    req.session.destroy(err => {
-        if (err) return res.json({ status: 'error', message: 'Ocurrio un error' })
-        return res.redirect('/login')
-    })
-})
-
-router.get('/query', (req,res)=>{
-    if (req.session.passport?.user.username) {
-        res.send(`el usuario logueado es ${req.session.passport.user.username}`)
-    } else {
-        res.send(`no hay usuario logueado`)
-    }    
-})
+//API para consultar usuario logueado  -- no pedido, solo por comodidad
+router.get('/query', queryController)
 
 export default router

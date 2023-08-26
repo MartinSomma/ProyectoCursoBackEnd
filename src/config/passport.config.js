@@ -46,7 +46,6 @@ const initializePassport = () => {
         try {
             const queryUser = await userModel.findOne({ username: user }).lean().exec()
             if (queryUser) {
-                console.log(`User already exists con el carrito `)
                 return done(null, false)
             }
 
