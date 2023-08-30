@@ -1,7 +1,4 @@
 import {Router} from 'express'
-import Carrito from '../cart.js'
-import cartModel from '../dao/models/cart.model.js'
-import productModel from '../dao/models/products.model.js'
 import { cartCreateController, 
         cartViewAllController, 
         cartByIDController,
@@ -9,33 +6,38 @@ import { cartCreateController,
         cartDeleteProductsController,
         cartDeleteProductByIDController,
         cartUpdateProductQtyController,
-        cartAddProductsController } from '../controllers/carrito.controllers.js'
+        cartAddProductsController,
+        cartPurchaseController
+        } from '../controllers/carrito.controllers.js'
 
 const router = Router()
 
-// endpoint para ver carrito x ID
+// endpoint para ver carrito x ID - getById 
 router.get('/:cid', cartByIDController)
 
-//endpoint para crear carrito vacio, devuelve id del carrito
+//endpoint para crear carrito vacio, devuelve id del carrito - create
 router.post('/', cartCreateController)
 
-// endpoint para ver todos los carritos -- NO PEDIDO, SOLO POR COMODIDAD --
+// endpoint para ver todos los carritos -- NO PEDIDO, SOLO POR COMODIDAD -- getAll
 router.get('/', cartViewAllController)
 
-// endpoint para agregar producto en un carrito
+// endpoint para agregar producto en un carrito -- solos user, usa combinacion de servicios
 router.post('/:cid/product/:pid', cartAddProductController )
 
-//eliminar todos los productos del carrito
+//eliminar todos los productos del carrito -- emptyCart
 router.delete('/:cid', cartDeleteProductsController )
 
-//eliminar del carrito el producto indicado x id
+//eliminar del carrito el producto indicado x id -- deleteProduct, usa combinacion de otros
 router.delete('/:cid/product/:pid', cartDeleteProductByIDController )
 
-//endpoint para agregar por body la cantidad a un producto en un carrito
+//endpoint para agregar por body la cantidad a un producto en un carrito -- updateProductQty, no va, usa cpmbinacion
 router.put('/:cid/product/:pid', cartUpdateProductQtyController)
 
-// endpint para agregar producto/qty por body
+// endpint para agregar producto/qty por body -- addProducts
 router.put( '/:cid', cartAddProductsController )
+
+// endpoint para hacer la compra de los prods q estan en el carrito
+router.get('/:cid/purchase', cartPurchaseController )
 
 
 

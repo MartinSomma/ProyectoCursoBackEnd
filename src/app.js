@@ -7,7 +7,7 @@ import carritoRouter from './routers/carrito.router.js'
 import prodVistaRouter from './routers/prodvista.router.js'
 import carritoVista from './routers/carritoVista.router.js'
 import mongoose, { mongo } from 'mongoose'
-import productModel from './dao/models/products.model.js'
+import productModel from './models/products.model.js'
 import registroVista from './routers/registroVista.router.js'
 import loginVista from './routers/loginVista.router.js'
 import session from 'express-session'
@@ -18,7 +18,7 @@ import __dirname from "./utils.js"
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
-import config from './config.js'
+import config from './config/config.js'
 
 const PORT = config.port
 const dbURL = config.dbURL

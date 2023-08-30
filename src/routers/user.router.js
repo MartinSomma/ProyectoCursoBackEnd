@@ -3,7 +3,7 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import express from 'express'
 import passport from "passport";
-import config from '../config.js'
+import config from '../config/config.js'
 import { registroController, failRegisterController, loginController,
         failLoginController, githubController, githubcallbackController, logoutController,
         queryController } from '../controllers/user.controller.js';
@@ -46,6 +46,6 @@ router.get('/githubcallback', passport.authenticate('github', {failureRedirect: 
 router.get("/logout", logoutController)
 
 //API para consultar usuario logueado  -- no pedido, solo por comodidad
-router.get('/query', queryController)
+router.get('/current', queryController)
 
 export default router

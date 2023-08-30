@@ -31,10 +31,11 @@ formulario.onsubmit = (event) =>{
     .then( result => result.json()
      )
     .then (result => {
-        if (result.status === 'error') alert(`Error: ${result.error}`) 
+        console.log(result)
+        if (result.status === 'error') alert(`Error: ${result.message}`) 
         else alert ('Todo Salio ok!')
     })
-    .catch( () => console.log('dio error') )
+    .catch( (error) => console.log(error) )
 }
 
 const socket = io()

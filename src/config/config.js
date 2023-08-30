@@ -20,10 +20,12 @@ export default {
     dbURL: process.env.dbURL,
     dbNAME: process.env.dbNAME,
     SessionSecretKey: process.env.SESSION_SECRET_KEY,
-    userCollection: process.env.USER_COLLECTION,
     githubClientID: process.env.GITHUB_clientID,
     githubClientSecret: process.env.GITHUB_clientSecret,
     githubCallBackURL: process.env.GITHUB_callbackURL,
+    userCollection: process.env.USER_COLLECTION,
     productCollection: process.env.PRODUCT_COLLECTION,
-    cartCollection: process.env.CART_COLLECTION
+    cartCollection: process.env.CART_COLLECTION,
+    ticketCollection: process.env.TICKET_COLLECTION,
+    persistance: process.env.PERSISTANCE
 }

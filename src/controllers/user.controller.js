@@ -1,3 +1,5 @@
+import UserDTO from "../dto/user.dto.js"
+
 export const registroController = (req, res) => {
     res.redirect('/login')
 }
@@ -31,7 +33,8 @@ export const logoutController = (req, res) => {
 
 export const queryController = (req,res) => {
     if (req.session.passport?.user.username) {
-        res.send(`el usuario logueado es ${req.session.passport.user.username}`)
+        const info = new UserDTO(req.session.passport.user).info
+        res.send(info)
     } else {
         res.send(`no hay usuario logueado`)
     }  

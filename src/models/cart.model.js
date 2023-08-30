@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import config from "../../config.js"
+import config from "../config/config.js"
 
 const cartCollection = config.cartCollection
 const productCollection = config.productCollection

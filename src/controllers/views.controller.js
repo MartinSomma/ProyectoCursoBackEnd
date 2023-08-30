@@ -1,14 +1,12 @@
-import { getCarritoService } from "../services/cart.services.js";
-import { getProductsService } from '../services/product.services.js'
+import { ProdcutService } from '../services/product.service.js' 
+import { CartService } from '../services/cart.services.js';
 
 
 export const viewCartByIDController = async (req, res) => {
   try {
     const id = req.params.cid;
-    const result = await getCarritoService(id);
-    console.log(result.products[0].product.code);
+    const result = await CartService.getByIdSP(id);
     res.status(200).render("carrito", { result });
-    //res.status(200).json({ status: 'success', payload: result })
   } catch (err) {
     return res.status(500).json({ status: "error", error: err.message });
   }
@@ -24,8 +22,7 @@ export const viewRegistroController = (req, res) => {
 
 export const viewProductsController = async (req, res) => {
     try {
-        const data = await getProductsService(req, res);
-
+        const data = await ProdcutService.getAllPaginate(req);
         res.status(200).render("index", {
                                 data: data,
                                 username: req.session.passport.user.username,
