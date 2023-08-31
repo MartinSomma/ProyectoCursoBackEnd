@@ -1,59 +1,55 @@
-import { CartService } from '../services/cart.services.js'
+import { CartService, validarCarritoVenta } from '../services/cart.services.js'
 import { ProdcutService } from '../services/product.service.js'
 import { TicketService } from '../services/ticket.service.js'
-
-import ticketModel from '../models/ticket.model.js'
 import { genRandonCode } from '../utils.js'
 
 
+export const cartPurchasePreviewController = async(req, res) => {
+    const cartID = req.params.cid
+    try{
+      const products = await validarCarritoVenta(cartID)
+      res.status(200).render("ticket_preview", { products });
+    } catch(err) {
+      console.log(err)
+    }
+  }
+
 export const cartPurchaseController = async(req, res) => {
-    
-    //corroborar si el stock alcanza para la cantidad pedida
 
     const cartID = req.params.cid
     const cartPopulated = await CartService.getById(cartID)
+    const products = await validarCarritoVenta(cartID)
 
-    const prodsOk = cartPopulated.products.filter(item => {
-        if (item.quantity <= item.product.stock) {
-            ProdcutService.update(item.product._id, {stock: item.product.stock-item.quantity}  )
-            return true
-        }})
-
-    if (prodsOk.length <= 0 ) return res.status(400).json({status: "error", message: "No hay productos para comprar"}) 
-
-    const prodsNoOk = { products: [] }
-    prodsNoOk.products = cartPopulated.products.filter(item => item.quantity > item.product.stock)
-    
-    //Calculo total de carrito OK
-    const total = prodsOk.reduce((total, item) => total + item.product.price * item.quantity, 0)
-    
-
-    //Creo el ticket, con total de la compra y productos.
-    const data ={
+    //Preparo el ticket, con total de la compra y productos.
+    const data = {
         code: genRandonCode(12),
-        total_amount: total,
+        total_amount: products.total_amount,
         purchaser: req.session.passport?.user.username || null,
-        products: prodsOk
+        products: products.Ok.products
     }
-    
-    // genero el ticket con productos y actualizo carrito con productos sin stock 
+
+    //genero el ticket con productos y actualizo carrito con productos sin stock 
     try{
+        if (products.Ok.products.length == 0) {
+            return res.send("No hay productos en el carrito o no hay stock")
+        }
+
+        //actualizo stock
+        products.Ok.products.forEach(async (item) => await ProdcutService.update(item.product._id, {stock: item.product.stock-item.quantity}  ))
+
         const ticket = await TicketService.create(data)
         const ticketRender = await TicketService.findById(ticket._id)
 
-        const cartResult = await CartService.update(cartID, prodsNoOk )
+        const cartResult = await CartService.update(cartID, products.NoOk )
         
-        //res.status(200).json({status: "succes", payload: result})
-        res.status(200).render("ticket", { ticketRender });
+        //res.status(200).json({status: "success", payload: cartResult})
+        res.status(200).render("ticket", { ticketRender, products });
         
     } catch (err) {
         console.log(err)
     }
-        
-
-    //res.send(cartPopulated)    
-
 }
+
 export const cartByIDController = async(req,res)=>{
     
     try{
@@ -135,7 +131,7 @@ export const cartAddProductController = async(req,res) =>{
     
         }
         catch (err){
-            res.status(404).json({status: 'error42', error: err.message})
+            res.status(404).json({status: 'error', error: err.message})
     
         }
         

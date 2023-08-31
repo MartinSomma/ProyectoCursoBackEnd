@@ -12,7 +12,14 @@ function btnAccion(id){
 
     fetch(`http://localhost:8080/api/carrito/${cartList.value}/product/${id}`, {method: "POST"})
     .then((resp) => resp.json())
-    .then ((data) => alert(`prod id ${id} agregado al carrito ${cartList.value}`))
+    .then ((data) => {
+        if (data.status != 'success') {
+            alert(`${data.error}`)    
+        } else {
+            alert(`prod id ${id} agregado al carrito ${cartList.value}.`)
+        }
+        
+    })
     .catch ( (error) => {
         console.log("No se pudo conectar, error: " + error)})
 

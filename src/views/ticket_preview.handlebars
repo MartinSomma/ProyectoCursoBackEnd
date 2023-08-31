@@ -1,10 +1,5 @@
 <div>
-    <h2> Codigo de pedido {{ticketRender.code}}</h2>
-    <p>Comprador: {{ticketRender.purchaser}}</p>
-    
-    <p>FECHA DE LA COMPRA: {{ticketRender.purchase_datetime}}</p>
-
-
+<h2>Productos a comprar</h2>
     <table class="table table-striped">
         <tr>
             <th>Prod ID</th>
@@ -15,7 +10,7 @@
             <th>Categoria</th>
         </tr>
 
-        {{#each ticketRender.products}}
+        {{#each products.Ok.products}}
             <tr class="table-light">
                 <td>{{this.product._id}} </td>
                 <td>{{this.product.code}} </td>
@@ -28,9 +23,11 @@
         {{/each}}
     </table>
 
-    <h2> TOTAL: ${{ticketRender.total_amount}}</h2>
+    <h2> TOTAL: ${{products.total_amount}}</h2>
 
-    <h2>Productos no comprados por falta de stock, modificar carrito</h2>
+    
+
+    <h2>Productos sin stock</h2>
     
     <table class="table table-striped">
         <tr>

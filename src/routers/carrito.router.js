@@ -7,7 +7,8 @@ import { cartCreateController,
         cartDeleteProductByIDController,
         cartUpdateProductQtyController,
         cartAddProductsController,
-        cartPurchaseController
+        cartPurchaseController,
+        cartPurchasePreviewController
         } from '../controllers/carrito.controllers.js'
 
 const router = Router()
@@ -35,6 +36,9 @@ router.put('/:cid/product/:pid', cartUpdateProductQtyController)
 
 // endpint para agregar producto/qty por body -- addProducts
 router.put( '/:cid', cartAddProductsController )
+
+// endpoint de preview de la compra de los prods q estan en el carrito
+router.get('/:cid/purchase_preview', cartPurchasePreviewController )
 
 // endpoint para hacer la compra de los prods q estan en el carrito
 router.get('/:cid/purchase', cartPurchaseController )
