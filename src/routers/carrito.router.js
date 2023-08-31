@@ -1,4 +1,6 @@
 import {Router} from 'express'
+import { handlePolicies } from '../middlewares/policies.middleware.js'
+
 import { cartCreateController, 
         cartViewAllController, 
         cartByIDController,
@@ -38,10 +40,10 @@ router.put('/:cid/product/:pid', cartUpdateProductQtyController)
 router.put( '/:cid', cartAddProductsController )
 
 // endpoint de preview de la compra de los prods q estan en el carrito
-router.get('/:cid/purchase_preview', cartPurchasePreviewController )
+router.get('/:cid/purchase_preview', handlePolicies(['user']), cartPurchasePreviewController )
 
 // endpoint para hacer la compra de los prods q estan en el carrito
-router.get('/:cid/purchase', cartPurchaseController )
+router.get('/:cid/purchase', handlePolicies(['user']), cartPurchaseController )
 
 
 
