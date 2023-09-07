@@ -15,13 +15,16 @@ router.get('/', getProductsController )
 router.get('/:pid', handlePolicies(['admin', 'user']), getProductByIDController ) 
 
 //endpoint para crear nuevo producto, admin
-router.post('/', handlePolicies(['admin']), createProductController )
+//router.post('/', handlePolicies(['admin']), createProductController )
+router.post('/', createProductController )
 
 //endpoint para actualizar los datos de un producto, admin
-router.put('/:pid', handlePolicies(['admin']), updateProductController )
+//router.put('/:pid', handlePolicies(['admin']), updateProductController )
+router.put('/:pid', updateProductController )
 
 //endpoint para borrar producto x id, admin
-router.delete('/:pid', handlePolicies(['admin']), deleteProductByIdController )
+//router.delete('/:pid', handlePolicies(['admin']), deleteProductByIdController )
+router.delete('/:pid', deleteProductByIdController )
 
 
 export default router

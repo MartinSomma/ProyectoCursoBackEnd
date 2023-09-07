@@ -27,5 +27,6 @@ export default {
     productCollection: process.env.PRODUCT_COLLECTION,
     cartCollection: process.env.CART_COLLECTION,
     ticketCollection: process.env.TICKET_COLLECTION,
-    persistance: process.env.PERSISTANCE
+    persistance: process.env.PERSISTANCE,
+    logging: process.env.LOGGING
 }

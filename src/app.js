@@ -13,12 +13,15 @@ import loginVista from './routers/loginVista.router.js'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import userRouter from './routers/user.router.js'
+import mockingproducts from './routers/mockingproducts.router.js'
+import errorHandler from './middlewares/error.middleware.js'
 
 import __dirname from "./utils.js"
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
 import config from './config/config.js'
+
 
 const PORT = config.port
 const dbURL = config.dbURL
@@ -30,6 +33,7 @@ let io = new Server()
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+
 
 
 try {
@@ -77,6 +81,7 @@ app.get('/health', (req, res) => res.json({ message: `The server is running on p
 app.use('/api/products', prodRouter)
 app.use('/api/carrito', carritoRouter)
 
+
 app.use('/user', userRouter)
 
 app.use('/products', prodVistaRouter)
@@ -84,6 +89,9 @@ app.use('/realtimeproducts', realtimeproductsRouter )
 app.use('/carrito', carritoVista)
 app.use('/registro', registroVista)
 app.use('/login', loginVista)
+app.use('/mockingproducts', mockingproducts)
+
+app.use(errorHandler)
 
 io.on('connection', socket => {
     productModel.find()

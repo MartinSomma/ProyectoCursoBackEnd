@@ -6,6 +6,8 @@ export const CartService = new CartRepository (new Cart)
 export const validarCarritoVenta = async(id) =>{
     const cartPopulated = await CartService.getById(id)
 
+    if (cartPopulated == null) return null
+
     const productos = {
         Ok: {
             products:[]

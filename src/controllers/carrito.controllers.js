@@ -2,34 +2,58 @@ import { CartService, validarCarritoVenta } from '../services/cart.services.js'
 import { ProdcutService } from '../services/product.service.js'
 import { TicketService } from '../services/ticket.service.js'
 import { genRandonCode } from '../utils.js'
+import CustomError from "../services/errors/customError.js";
+import EErrors from "../services/errors/enum.js";
+import { generateProductErrorInfo, generateDataErrorInfo } from "../services/errors/info.js";
 
 
-export const cartPurchasePreviewController = async(req, res) => {
+export const cartPurchasePreviewController = async(req, res, next) => {
     const cartID = req.params.cid
     try{
-      const products = await validarCarritoVenta(cartID)
-      res.status(200).render("ticket_preview", { products });
+        const products = await validarCarritoVenta(cartID)
+
+        if (products == null) {
+            CustomError.createError({
+                name: 'CartId not found',
+                cause: generateDataErrorInfo(cartID),
+                message: 'Error looking for cartID in DB',
+                code: EErrors.NOT_FOUND
+            })
+        }
+
+        res.status(200).render("ticket_preview", { products });
+
     } catch(err) {
-      console.log(err)
+        next(err)
     }
   }
 
-export const cartPurchaseController = async(req, res) => {
+export const cartPurchaseController = async(req, res, next) => {
 
     const cartID = req.params.cid
-    const cartPopulated = await CartService.getById(cartID)
-    const products = await validarCarritoVenta(cartID)
 
-    //Preparo el ticket, con total de la compra y productos.
-    const data = {
-        code: genRandonCode(12),
-        total_amount: products.total_amount,
-        purchaser: req.session.passport?.user.username || null,
-        products: products.Ok.products
-    }
+    try {
+        const products = await validarCarritoVenta(cartID)
 
-    //genero el ticket con productos y actualizo carrito con productos sin stock 
-    try{
+        if (products == null) {
+            CustomError.createError({
+                name: 'CartId not found',
+                cause: generateDataErrorInfo(cartID),
+                message: 'Error looking for cartID in DB',
+                code: EErrors.NOT_FOUND
+            })
+        }
+
+        //Preparo el ticket, con total de la compra y productos.
+        const data = {
+            code: genRandonCode(12),
+            total_amount: products.total_amount,
+            purchaser: req.session.passport?.user.username || null,
+            products: products.Ok.products
+        }
+
+        //genero el ticket con productos y actualizo carrito con productos sin stock 
+        
         if (products.Ok.products.length == 0) {
             return res.send("No hay productos en el carrito o no hay stock")
         }
@@ -39,30 +63,34 @@ export const cartPurchaseController = async(req, res) => {
 
         const ticket = await TicketService.create(data)
         const ticketRender = await TicketService.findById(ticket._id)
-
         const cartResult = await CartService.update(cartID, products.NoOk )
         
-        //res.status(200).json({status: "success", payload: cartResult})
         res.status(200).render("ticket", { ticketRender, products });
         
     } catch (err) {
-        console.log(err)
+        next(err)
     }
 }
 
-export const cartByIDController = async(req,res)=>{
+export const cartByIDController = async(req,res,next)=>{
     
     try{
         const id = req.params.cid
         const result = await CartService.getById(id)
 
         if (result == null) {
-            return res.status(404).json({status: 'error', error: 'not found'})
+            CustomError.createError({
+                name: `CartId ${id} not found`,
+                cause: generateDataErrorInfo(id),
+                message: `Error looking for cartID in DB`,
+                code: EErrors.NOT_FOUND
+            })
+            
         }
         res.status(200).json({status: 'success', payload: result})
     }
     catch (err) {
-        res.status(404).json({status: 'error', error: err.message})
+        next(err)
     }
     
 }
@@ -79,22 +107,27 @@ export const cartCreateController = async(req, res) => {
     
     }
 
-export const cartViewAllController = async(req,res)=>{
+export const cartViewAllController = async(req,res,next)=>{
     
         try{
             const resultado = await CartService.getAll()
             if (resultado == null) {
-                return res.status(404).json({status: 'error', error: 'not found'})
+                CustomError.createError({
+                    name: 'Carts not found',
+                    cause: generateDataErrorInfo(id),
+                    message: 'Error looking for carts (all IDs) in DB',
+                    code: EErrors.NOT_FOUND
+                })
             }
             res.status(200).json({status: 'success', payload: resultado})
         }
         catch (err) {
-            res.status(404).json({status: 'error', error: err.message})
+            next(err)
         }
         
     }
 
-export const cartAddProductController = async(req,res) =>{
+export const cartAddProductController = async(req,res,next) =>{
         const cid = req.params.cid
         const pid = req.params.pid
         try {
@@ -104,11 +137,21 @@ export const cartAddProductController = async(req,res) =>{
             const newProd = await ProdcutService.getById(pid)
     
             if (cart2Update == null) {
-                return res.status(404).json({status: 'error', error: `El carrito con id ${cid} no existe`})
+                CustomError.createError({
+                    name: 'CartId not found',
+                    cause: generateDataErrorInfo(cid),
+                    message: `El carrito con id ${cid} no existe`,
+                    code: EErrors.NOT_FOUND
+                })
             }
     
             if (newProd == null) {
-                return res.status(404).json({status: 'error', error: `El producto con id ${pid} no existe`})
+                CustomError.createError({
+                    name: 'Products ID not found',
+                    cause: generateDataErrorInfo(pid),
+                    message: `El producto con id ${pid} no existe`,
+                    code: EErrors.NOT_FOUND
+                })
             }
             
             const pIndex = cart2Update.products.findIndex( item => item.product == pid)
@@ -131,18 +174,26 @@ export const cartAddProductController = async(req,res) =>{
     
         }
         catch (err){
-            res.status(404).json({status: 'error', error: err.message})
+            next(err)
     
         }
         
 }
 
-export const cartDeleteProductsController = async(req,res) =>{
+export const cartDeleteProductsController = async(req,res, next) =>{
     try{
         const cid = req.params.cid
         const cart2Update = await CartService.getByIdSP(cid)
         
-        if (cart2Update == null) return res.status(400).json({status: 'error', payload: `El carrito con id ${cid} no existe`})    
+        if (cart2Update == null) {
+            CustomError.createError({
+                name: `CartId ${cid} not found`,
+                cause: generateDataErrorInfo(cid),
+                message: `Error looking for cartID in DB`,
+                code: EErrors.NOT_FOUND
+            })
+        }
+        
 
         cart2Update.products = []
 
@@ -151,7 +202,7 @@ export const cartDeleteProductsController = async(req,res) =>{
 
     }
     catch (err) {
-        res.status(404).json({status: 'error', error: err.message})
+        next(err)
     }
 }
 
