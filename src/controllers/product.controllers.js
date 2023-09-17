@@ -3,6 +3,7 @@ import config from '../config/config.js'
 import CustomError from "../services/errors/customError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateProductErrorInfo, generateDataErrorInfo } from "../services/errors/info.js";
+import logger from '../logger.js'
 
 const PORT = config.port
 
@@ -13,6 +14,7 @@ export const getProductsController = async(req,res) => {
         res.status(200).json({ status: 'success', payload: result })
     }
     catch (err){
+        logger.error(err)
         res.status(500).json({status: 'error', error: err.message})
     }
 }

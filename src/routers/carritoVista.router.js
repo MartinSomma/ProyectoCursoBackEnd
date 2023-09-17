@@ -1,6 +1,5 @@
 import {Router} from 'express'
-import {viewCartByIDController } 
-        from '../controllers/views.controller.js'
+import {viewCartByIDController } from '../controllers/views.controller.js'
 
 
 const router = Router()

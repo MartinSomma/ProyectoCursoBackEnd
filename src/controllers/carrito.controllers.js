@@ -5,7 +5,7 @@ import { genRandonCode } from '../utils.js'
 import CustomError from "../services/errors/customError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateProductErrorInfo, generateDataErrorInfo } from "../services/errors/info.js";
-
+import logger from '../logger.js'
 
 export const cartPurchasePreviewController = async(req, res, next) => {
     const cartID = req.params.cid
@@ -101,6 +101,7 @@ export const cartCreateController = async(req, res) => {
         res.status(200).json({status: 'success', payload: result})
     } 
     catch (err) {
+        logger.error(err)
         res.status(404).json({status: 'error', error: err.message})
     }
         
@@ -224,6 +225,7 @@ export const cartDeleteProductByIDController = async(req, res) =>{
         res.status(200).json({status: 'success', payload: result})
     }
     catch (err){
+        logger.error(err)
         res.status(404).json({status: 'error', error: err.message})
     }
 }
@@ -258,7 +260,8 @@ export const cartUpdateProductQtyController = async (req, res) => {
 
     }
     catch (err) {
-        res.status(404).json({status: 'errorrrr', error: err.message})
+        logger.error(err)
+        res.status(404).json({status: 'error', error: err.message})
 
     }
     
@@ -305,7 +308,8 @@ export const cartAddProductsController = async (req, res) => {
 
     }
     catch(err){
-        res.status(404).json({status: 'errorrrr', error: err.message})
+        logger.error(err)
+        res.status(404).json({status: 'error', error: err.message})
 
     }
 }

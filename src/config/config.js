@@ -9,6 +9,8 @@ program.parse()
 
 // console.log(program.opts().mode === 'development')
 
+//console.log('modo', program.opts().mode)
+
 dotenv.config({
     path: program.opts().mode === 'development'
         ? './.env.dev'
@@ -16,6 +18,7 @@ dotenv.config({
 })
 
 export default {
+    ENVIROMENT: program.opts().mode,
     port: process.env.PORT,
     dbURL: process.env.dbURL,
     dbNAME: process.env.dbNAME,

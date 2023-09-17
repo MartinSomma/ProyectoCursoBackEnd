@@ -1,12 +1,13 @@
 import EErrors from "../services/errors/enum.js";
 import config from '../config/config.js'
+import logger from "../logger.js";
 
 const logging = config.logging
 
 export default(error, req, res, next) => {
-    //console.log('entro al mdw error')
     
-    if (logging === "on") console.log (error.cause)
+    if (logging === "on") logger.error(error.cause)
+
     switch(error.code) {
         case EErrors.INVALID_TYPES_ERROR:
             res.status(400).send({ status: 'error', error: error.name })

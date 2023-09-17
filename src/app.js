@@ -14,6 +14,7 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import userRouter from './routers/user.router.js'
 import mockingproducts from './routers/mockingproducts.router.js'
+import loggerRouter from './routers/logger.router.js'
 import errorHandler from './middlewares/error.middleware.js'
 
 import __dirname from "./utils.js"
@@ -21,6 +22,8 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 
 import config from './config/config.js'
+import logger from './logger.js'
+import { addlogger } from './middlewares/logger.middleware.js'
 
 
 const PORT = config.port
@@ -33,6 +36,7 @@ let io = new Server()
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+app.use(addlogger)
 
 
 
@@ -40,10 +44,10 @@ try {
     await mongoose.connect(dbURL, {
         useUnifiedTopology: true,
     })
-    const httpServer = app.listen(PORT, () => console.log('Srv Up!'))
+    const httpServer = app.listen(PORT, () => logger.info('Srv Up!'))
     io = new Server(httpServer)
 } catch(err) {
-    console.log(err.message)
+    logger.error(err.message)
 }
 
 app.engine('handlebars', handlebars.engine())
@@ -78,6 +82,10 @@ app.use(passport.session())
 
 
 app.get('/health', (req, res) => res.json({ message: `The server is running on port ${PORT}` }))
+
+app.use('/loggerTest', loggerRouter)
+
+
 app.use('/api/products', prodRouter)
 app.use('/api/carrito', carritoRouter)
 
