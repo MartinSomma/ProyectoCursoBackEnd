@@ -25,6 +25,24 @@ import config from './config/config.js'
 import logger from './logger.js'
 import { addlogger } from './middlewares/logger.middleware.js'
 
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUiExpress from 'swagger-ui-express'
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.1.0',
+        info: {
+            title: 'Documentacion de API de Ecommerce CoderHouse',
+            description: 'Proyecto Curso Backend'
+        }   
+    },
+    apis: ['./docs/**/*.yaml']
+}
+
+const specs = swaggerJSDoc(swaggerOptions)
+
+
+
 
 const PORT = config.port
 const dbURL = config.dbURL
@@ -37,6 +55,7 @@ let io = new Server()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(addlogger)
+app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 
 

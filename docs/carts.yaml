@@ -1,0 +1,224 @@
+paths:
+  /api/carrito:
+    get:
+      tags: 
+        - Carrito
+      summary: Devuelve todos los carritos
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Carrito'
+        '404':
+          description: Carrito no encontrado
+    post:
+      tags: 
+        - Carrito
+      summary: endpoint para crear carrito vacio, devuelve id del carrito
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  payload:
+                    type: string
+        '404':
+          description: Carrito no encontrado
+
+
+
+  /api/carrito/{cartId}:
+    get:
+      tags: 
+        - Carrito
+      summary: endpoint para ver carrito x ID
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Id del carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrito'
+    put:
+      tags: 
+        - Carrito
+      summary: endpint para agregar producto/qty por body
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: ID of the cart
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: array
+              items:
+                type: object
+                properties:
+                  product:
+                    type: string
+                    format: ObjectId
+                    description: ID del producto a agregar
+                  quantity:
+                    type: number
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrito'
+    delete:
+      tags: 
+        - Carrito
+      summary: endpoint para eliminar todos los productos del carrito
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: ID de carrito
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrito'
+
+  /api/carrito/{cartId}/product/{prodId}:
+    delete:
+      tags: 
+        - Carrito
+      summary: eliminar del carrito el producto indicado x id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: ID of the cart
+          schema:
+            type: string
+        - name: prodId
+          in: path
+          required: true
+          description: ID del producto a eliminar
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Carrito'
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                error:
+                type: string
+    post:
+          tags: 
+            - Carrito
+          summary: endpoint para agregar un producto x id en un carrito
+          parameters:
+          - name: cartId
+            in: path
+            required: true
+            description: ID of the cart
+            schema:
+              type: string
+          - name: prodId
+            in: path
+            required: true
+            description: ID del producto a eliminar
+            schema:
+              type: string
+          responses:
+            '200':
+              description: Success
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Carrito'
+            '404':
+              description: No se pudo agregar
+              content:
+                application/json:
+                  schema:
+                    error:
+                    type: string
+  /api/carrito/{cartId}/purchase_preview:
+    get:
+      tags: 
+        - Carrito
+      summary: endpoint de preview de la compra de los prods q estan en el carrito
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: ID of the cart
+          schema:
+            type: string
+      responses:
+            '200':
+              description: devuelve vista con preview de la compra
+
+  /api/carrito/{cartId}/purchase:
+    get:
+      tags: 
+        - Carrito
+      summary: endpoint para hacer la compra de los prods q estan en el carrito
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: ID of the cart
+          schema:
+            type: string
+      responses:
+            '200':
+              description: Genera el ticket de compra, calcula total de la compra y productos, actualiza stock y devuelve una vista del ticket de compra
+
+
+
+components:
+  schemas:
+    Carrito:
+      type: object
+      properties:
+        _id: 
+          type: ObjectId
+          description: Id autogenerado de mongo
+        prodcuts:
+          type: array
+          description: array con producto y cantidad
+          items:
+            type: object
+            properties:
+              producto:
+                type: ObjectId
+              cantidad:
+                type: number

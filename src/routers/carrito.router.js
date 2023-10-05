@@ -27,7 +27,7 @@ router.get('/', cartViewAllController)
 // endpoint para agregar producto en un carrito -- solos user, usa combinacion de servicios
 router.post('/:cid/product/:pid', cartAddProductController )
 
-//eliminar todos los productos del carrito -- emptyCart
+// endpoint para eliminar todos los productos del carrito -- emptyCart
 router.delete('/:cid', cartDeleteProductsController )
 
 //eliminar del carrito el producto indicado x id -- deleteProduct, usa combinacion de otros
@@ -41,6 +41,7 @@ router.put( '/:cid', cartAddProductsController )
 
 // endpoint de preview de la compra de los prods q estan en el carrito
 router.get('/:cid/purchase_preview', handlePolicies(['user']), cartPurchasePreviewController )
+
 
 // endpoint para hacer la compra de los prods q estan en el carrito
 router.get('/:cid/purchase', handlePolicies(['user']), cartPurchaseController )

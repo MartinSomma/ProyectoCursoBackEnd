@@ -1,0 +1,206 @@
+paths:
+  /api/products:
+    get:
+      tags: 
+        - Products
+      summary: endpoint para consultar todos los productos
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '500':
+          description: Internal Error
+    post:
+      tags: 
+        - Products
+      security:
+        - bearerAuth: []
+      summary: Create a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                title:
+                  type: string
+                  required: true
+                category:
+                  type: string
+                  required: true
+                size:
+                  type: string
+                code:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  required: true
+                stock:
+                  type: number
+                  required: true
+                thumbnail:
+                  type: string
+                status:
+                  type: boolean
+              required:
+                - title
+                - description
+                - code
+                - status
+                - category
+                - price
+                - stock
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+  /api/products/{productId}:
+    get:
+      tags: 
+        - Products
+      summary: endpoint para ver un producto x id
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    put:
+      tags: 
+        - Products
+      summary: endpoint para actualizar los datos de un producto x id
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                title:
+                  type: string
+                  required: true
+                category:
+                  type: string
+                  required: true
+                size:
+                  type: string
+                code:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  required: true
+                stock:
+                  type: number
+                  required: true
+                thumbnail:
+                  type: string
+                status:
+                  type: boolean
+              required:
+                - title
+                - description
+                - code
+                - status
+                - category
+                - price
+                - stock
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Id no encontrado
+    delete:
+      tags: 
+        - Products
+      summary: endpoint para borrar producto x id
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: ID no encontrado
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: id autogenerado por mongo
+        title:
+          type: string
+          description: nombre del articulo o producto
+        category:
+          type: string
+          description: categoria del producto por ej barzar, jardin, etc
+        code:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        stock:
+          type: number
+        thumbnail:
+          type: array
+          items:
+            type: string
+        status:
+          type: boolean
+      required:
+        - title
+        - description
+        - category
+        - price
+        - code
+        - stock
+        - category
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

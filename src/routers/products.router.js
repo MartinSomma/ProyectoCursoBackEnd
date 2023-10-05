@@ -13,6 +13,7 @@ router.get('/', getProductsController )
 
 //endpoint para ver un producto x id. prueba admin
 router.get('/:pid', handlePolicies(['admin', 'user']), getProductByIDController ) 
+//router.get('/:pid', getProductByIDController ) 
 
 //endpoint para crear nuevo producto, admin
 router.post('/', handlePolicies(['admin']), createProductController )

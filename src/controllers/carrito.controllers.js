@@ -209,7 +209,6 @@ export const cartDeleteProductsController = async(req,res, next) =>{
 
 export const cartDeleteProductByIDController = async(req, res) =>{  
     try{
-        console.log('ahora estamos aca')
         const cid = req.params.cid
         const pid = req.params.pid
 
