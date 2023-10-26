@@ -1,4 +1,4 @@
 node_modules
 logs
-.env.dev
-.env.prod
+./.env.dev
+./.env.prod
