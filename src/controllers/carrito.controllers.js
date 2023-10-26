@@ -1,11 +1,13 @@
 import { CartService, validarCarritoVenta } from '../services/cart.services.js'
 import { ProdcutService } from '../services/product.service.js'
 import { TicketService } from '../services/ticket.service.js'
-import { genRandonCode } from '../utils.js'
+import { genRandonCode, sendEmail } from '../utils.js'
 import CustomError from "../services/errors/customError.js";
 import EErrors from "../services/errors/enum.js";
 import { generateProductErrorInfo, generateDataErrorInfo } from "../services/errors/info.js";
 import logger from '../logger.js'
+import { UserService } from '../services/user.service.js';
+
 
 export const cartPurchasePreviewController = async(req, res, next) => {
     const cartID = req.params.cid
@@ -64,6 +66,9 @@ export const cartPurchaseController = async(req, res, next) => {
         const ticket = await TicketService.create(data)
         const ticketRender = await TicketService.findById(ticket._id)
         const cartResult = await CartService.update(cartID, products.NoOk )
+
+        console.log(ticketRender)
+        console.log(products)
         
         res.status(200).render("ticket", { ticketRender, products });
         
@@ -212,14 +217,26 @@ export const cartDeleteProductByIDController = async(req, res) =>{
         const cid = req.params.cid
         const pid = req.params.pid
 
+        //Buscar user por cartid
+        const params = {cart: cid}
+        const user = await UserService.findOne(params)
+        
+
+        if (user.profile.toLowerCase() == 'premium') {
+            const product = await ProdcutService.getById(pid)
+            sendEmail(user.email, 'Producto Eliminado', `El producto ${product.title} fue eliminado por el administrador`)
+            logger.info("Notif a user Premium de producto eliminado")
+        }
+        
         const cart2Update = await CartService.getByIdSP(cid)
         
         if (cart2Update == null) {
             return res.status(404).json({status: 'error', error: `El carrito con id ${cid} no existe`})
         }
-
+        
         cart2Update.products = cart2Update.products.filter( item => item.product != pid )
         
+
         const result = await CartService.update(cid, cart2Update)
         res.status(200).json({status: 'success', payload: result})
     }

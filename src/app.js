@@ -16,6 +16,8 @@ import userRouter from './routers/user.router.js'
 import mockingproducts from './routers/mockingproducts.router.js'
 import loggerRouter from './routers/logger.router.js'
 import errorHandler from './middlewares/error.middleware.js'
+import usersVista from './routers/vistaUsers.router.js'
+import resetPasswordVista from './routers/resetPasswordVista.router.js'
 
 import __dirname from "./utils.js"
 import passport from "passport";
@@ -107,9 +109,7 @@ app.use('/loggerTest', loggerRouter)
 
 app.use('/api/products', prodRouter)
 app.use('/api/carrito', carritoRouter)
-
-
-app.use('/user', userRouter)
+app.use('/api/users', userRouter)
 
 app.use('/products', prodVistaRouter)
 app.use('/realtimeproducts', realtimeproductsRouter )
@@ -117,6 +117,8 @@ app.use('/carrito', carritoVista)
 app.use('/registro', registroVista)
 app.use('/login', loginVista)
 app.use('/mockingproducts', mockingproducts)
+app.use('/users', usersVista)
+app.use('/reset-password', resetPasswordVista)
 
 app.use(errorHandler)
 

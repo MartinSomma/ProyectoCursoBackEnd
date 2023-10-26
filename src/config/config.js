@@ -7,10 +7,6 @@ program
     .option('--mode <mode>', 'Modo de ejecución', 'development')
 program.parse()
 
-// console.log(program.opts().mode === 'development')
-
-//console.log('modo', program.opts().mode)
-
 dotenv.config({
     path: program.opts().mode === 'development'
         ? './.env.dev'
@@ -28,8 +24,11 @@ export default {
     githubCallBackURL: process.env.GITHUB_callbackURL,
     userCollection: process.env.USER_COLLECTION,
     productCollection: process.env.PRODUCT_COLLECTION,
+    passwordRecoveryCollection: process.env.PASSWORD_RECOVERY_COLLECTION,
     cartCollection: process.env.CART_COLLECTION,
     ticketCollection: process.env.TICKET_COLLECTION,
     persistance: process.env.PERSISTANCE,
-    logging: process.env.LOGGING
+    logging: process.env.LOGGING,
+    email: process.env.EMAIL,
+    emailPassword: process.env.EMAILPASSWORD
 }

@@ -10,8 +10,9 @@ export default class CartDAO {
             const result = await cartModel.create(prod)
             return result[0]._id
         } catch (err) {
-            console.log (err)
+            logger.error(err)
         }
     }
     update = async (cid, data) => await cartModel.findByIdAndUpdate(cid, data, {returnDocument: 'after'})
+    deleteOne = async(data) => await cartModel.deleteOne(data)
 }

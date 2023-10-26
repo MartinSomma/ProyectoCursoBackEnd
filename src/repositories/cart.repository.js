@@ -7,4 +7,5 @@ export default class CartRepository {
     getByIdSP = async(id) => await this.dao.getByIdSP(id)
     create = async() => await this.dao.create()
     update = async(id, data) => this.dao.update(id, data)
+    deleteOne = async (data) => this.dao.deleteOne(data)
 }

@@ -6,6 +6,7 @@ import config from "./config.js"
 import { CartService } from "../services/cart.services.js"
 import { UserService} from  "../services/user.service.js"
 
+
 const githubClientID = config.githubClientID
 const githubClientSecret = config.githubClientSecret
 const githubCallBackURL = config.githubCallBackURL
@@ -20,17 +21,27 @@ const initializePassport = () => {
         clientSecret: githubClientSecret,
         callbackURL: githubCallBackURL
     }, async(accessToken, refreshToken, profile, done) => {
+
         try {
-            const user = await UserService.findOne({ username: profile._json.email })
-            if (user) return done(null, user)
+            const user = await UserService.findOne({ email: profile._json.email })
+
+            if (user) {
+                const result = await UserService.update(user._id, {lastlogin: Date.now()})
+                return done(null, user)
+            }
+            
+            
             const cart = await CartService.create()
+    
             const newUser = await UserService.create({
-                username: profile._json.email,
+                name: profile._json.name,
+                lastname: "github",
+                email: profile._json.email,
                 password: " ",
                 profile : "user",
                 cart: cart
-
             })
+
             return done(null, newUser)
         } catch(err) {
             return done(`Error to login with GitHub => ${err.message}`)
@@ -39,22 +50,29 @@ const initializePassport = () => {
 
     passport.use('registro', new LocalStrategy({
         passReqToCallback: true,
-        usernameField: 'username'
+        usernameField: 'email'
     }, async(req, user, password, done) => {
-        const { username, profile } = req.body
+        
+        const { name, lastname, email, profile } = req.body
+        
+        
                 
         try {
-            const queryUser = await UserService.findOne({ username: user })
+            const queryUser = await UserService.findOne({ email: email })
+            
             if (queryUser) {
                 return done(null, false)
             }
 
             const cart = await CartService.create()
-
+            
             const newUser = {
-                username, password: createHash(password), profile, cart
+                name, lastname, email, password: createHash(password), profile, cart
             }
+
             const result = await UserService.create(newUser)
+
+
             return done(null, result)
         } catch(err) {
             return done('error al obtener el user')
@@ -62,15 +80,19 @@ const initializePassport = () => {
     }))
 
     passport.use('login', new LocalStrategy({
-        usernameField: 'username'
-    }, async(user, password, done) => {
+        usernameField: 'email'
+    }, async(email, password, done) => {
+                
         try {
-            const queryUser = await UserService.findOne({ username: user })
+            const queryUser = await UserService.findOne({ email: email })
+
             if (!queryUser ) {
                 return done(null, false)
             }
 
             if (!isValidPassword(queryUser, password)) return done(null, false)
+
+            const result = await UserService.update(queryUser._id, {lastlogin: Date.now()})
             return done(null, queryUser)
         } catch(err) {
             console.log(err)
@@ -78,13 +100,11 @@ const initializePassport = () => {
     }))
 
     passport.serializeUser((user, done) => {
-        //console.log('serialize', user)
         done(null, user)
     })
 
     passport.deserializeUser(async (id, done) => {
         const user = await UserService.findById(id)
-        //console.log('des',user)
         done(null, user)
     })
 

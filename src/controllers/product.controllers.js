@@ -45,7 +45,8 @@ export const createProductController = async (req,res,next) => {
     try {
         const prod = req.body
 
-        if (!prod.title || !prod.description || !prod.price || !prod.code || !prod.status ||
+
+        if (!prod.title || !prod.description || !prod.price || !prod.code || 
             !prod.stock || !prod.category){
                 CustomError.createError({
                     name: 'Product creation error',
@@ -95,7 +96,7 @@ export const updateProductController = async(req,res, next ) => {
 export const deleteProductByIdController = async(req, res, next) => {
     try {
         const id = req.params.pid
-        //const resultado = await productModel.findByIdAndDelete(id)
+
         const resultado = await ProdcutService.delete(id)
         if ( resultado == null ){
             CustomError.createError({

@@ -1,5 +1,6 @@
 import { ProdcutService } from '../services/product.service.js' 
 import { CartService } from '../services/cart.services.js';
+import { UserService } from '../services/user.service.js';
 
 
 
@@ -11,6 +12,10 @@ export const viewCartByIDController = async (req, res) => {
   } catch (err) {
     return res.status(500).json({ status: "error", error: err.message });
   }
+}
+
+export const resetPasswordController = (req, res) => {
+  res.render("reset-password")
 }
 
 export const viewLoginController = (req, res) => {
@@ -36,4 +41,10 @@ export const viewProductsController = async (req, res) => {
 
 export const viewRealTimeProductsController = (req,res)=>{
     res.render('realtimeproducts')
+}
+
+export const viewUsersController = async(req, res) => {
+
+    const users = await UserService.find()
+  res.render('users', {users})
 }

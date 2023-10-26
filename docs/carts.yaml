@@ -170,6 +170,7 @@ paths:
                   schema:
                     error:
                     type: string
+                    
   /api/carrito/{cartId}/purchase_preview:
     get:
       tags: 

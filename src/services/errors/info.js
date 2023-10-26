@@ -12,7 +12,7 @@ export const generateProductErrorInfo = (product) => {
     return `
     Uno o mas parámetros estan incompletos o no son válidos.
     Lista de properties obligotorios:
-        - product.title: nombre del ProductDAO. ${product.title}
+        - product.title: nombre del Product, string. ${product.title}
         - product.description: descripcion, string. ${product.description}
         - product.price: precio, numerico. ${product.price}
         - product.code: Codigo, alfanumerico. ${product.code}

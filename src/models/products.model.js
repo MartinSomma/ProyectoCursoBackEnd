@@ -12,7 +12,7 @@ const productsSchema = new mongoose.Schema({
     status:{ type: Boolean, default: true },
     stock: { type: Number, required: true},
     category: { type: String, required: true},
-    thumbnails: { type: [String], default: []},
+    thumbnails: { type: [String], default: []}
 })
 
 mongoose.set('strictQuery', false)

@@ -4,9 +4,15 @@ import MongoStore from 'connect-mongo'
 import express from 'express'
 import passport from "passport";
 import config from '../config/config.js'
+import { handlePolicies } from '../middlewares/policies.middleware.js'
+
 import { registroController, failRegisterController, loginController,
         failLoginController, githubController, githubcallbackController, logoutController,
-        queryController } from '../controllers/user.controller.js';
+        queryController, queryAllUsersController, deleteExpiredUsers,
+        updateUserController, passwordRecoveryController, verifyTokenController,
+        newPasswordController } from '../controllers/user.controller.js';
+
+
 
 const router = Router()
 const dbURL = config.dbURL
@@ -29,6 +35,12 @@ app.use(session({
     saveUninitialized: true
 }))
 
+//API para consultar usuario
+router.get('/', queryAllUsersController)
+
+//API para ver/eliminar Usuarios expirados
+router.get('/expired', deleteExpiredUsers)
+
  //API para crear usuarios en la DB con passport
 router.post('/registro', passport.authenticate('registro', {failureRedirect: '/user/failRegister'}) , registroController)
 router.get('/failRegister', failRegisterController )
@@ -47,5 +59,17 @@ router.get("/logout", logoutController)
 
 //API para consultar usuario logueado  -- no pedido, solo por comodidad
 router.get('/current', queryController)
+
+//API para actulizar datos de un usuario
+router.put('/:id', updateUserController )
+
+//API para generar token de recuperacion de password
+router.post('/passwordrecovery', passwordRecoveryController)
+
+//API para recuperar password
+router.get ('/recovery/:token', verifyTokenController )
+
+// API para cambiar contraseña
+router.post ('/new-password', newPasswordController)
 
 export default router

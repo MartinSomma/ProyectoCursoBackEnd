@@ -1,16 +1,22 @@
-<h2>Login:</h2>
+<h2>Login</h2>
 <div>
-    <a href="/user/github">Login con GitHub</a>
+    <a href="/api/users/github">Login con GitHub</a>
 </div>
 <div>
-<form action="http://localhost:8080/user/login" method="post">
+<form action="http://localhost:8080/api/users/login" method="post">
     <div>
-        <label for="user">User: </label>
-        <input name="username" id="user" value="" />
+        <label for="email">User (email): </label>
+        <input name="email" id="email" value="" />
     </div>
     <div>
         <label for="password">contraseña: </label>
-        <input name="password" type="password"value="" />
+        <input name="password" type="text"value="" />
+    </div>
+
+    <div>
+        <a href="/registro">Registro</a> |
+        <a href="/reset-password">Olvide mi contraseña</a>
+
     </div>
      
     <div>
